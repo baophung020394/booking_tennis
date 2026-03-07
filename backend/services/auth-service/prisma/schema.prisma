@@ -1,0 +1,113 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  planType  String   @default("basic") // basic, pro, enterprise
+  status    String   @default("active") // active, suspended
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users  User[]
+  branches Branch[]
+  @@map("organizations")
+}
+
+model Branch {
+  id             String       @id @default(uuid())
+  organizationId String
+  name           String
+  address        String?
+  phone          String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  users        User[]
+  courts       Court[]
+
+  @@index([organizationId])
+  @@map("branches")
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  name        String   @unique // admin, coach, student, parent, player
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users User[]
+  @@map("roles")
+}
+
+model User {
+  id             String       @id @default(uuid())
+  organizationId String?
+  branchId       String?
+  roleId         String
+  email          String
+  passwordHash   String?
+  fullName       String
+  phone          String?
+  avatarUrl      String?
+  status         String       @default("active") // active, inactive
+  googleId       String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  branch       Branch?       @relation(fields: [branchId], references: [id], onDelete: SetNull)
+  role         Role          @relation(fields: [roleId], references: [id])
+  passwordResetTokens PasswordResetToken[]
+
+  @@unique([organizationId, email])
+  @@index([roleId])
+  @@index([status])
+  @@index([email])
+  @@map("users")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
+  @@map("password_reset_tokens")
+}
+
+model Court {
+  id          String   @id @default(uuid())
+  branchId    String
+  name        String
+  type        String   // indoor, outdoor
+  pricePerHour Float
+  description String?
+  status      String   @default("active") // active, maintenance
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  branch Branch @relation(fields: [branchId], references: [id], onDelete: Cascade)
+
+  @@index([branchId])
+  @@index([status])
+  @@map("courts")
+}
