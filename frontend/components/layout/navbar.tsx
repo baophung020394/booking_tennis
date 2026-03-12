@@ -24,7 +24,7 @@ export function Navbar() {
     router.push("/login");
   };
 
-  // Tránh hydration mismatch bằng cách chỉ render auth buttons sau khi load xong
+  // Avoid hydration mismatch by only rendering auth buttons after load
   const showAuthButtons = !isLoading;
 
   const navItems = [

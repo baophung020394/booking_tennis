@@ -68,7 +68,7 @@ export function useSessions(coachId?: string, studentId?: string) {
       }
       return sessions;
     },
-    enabled: !!coachId || !!studentId, // Chỉ query khi có ít nhất một trong hai
+    enabled: !!coachId || !!studentId, // Only query when at least one of the two is provided
   });
 }
 

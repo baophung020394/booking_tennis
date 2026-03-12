@@ -13,13 +13,13 @@ export default function ReportsPage() {
   const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const [selectedStudentId, setSelectedStudentId] = useState<string>("");
-  // Chỉ query sessions khi user đã được load và là coach
+  // Only query sessions when user is loaded and is a coach
   const { data: sessions } = useSessions(
     user && user.role === "coach" ? user.id : undefined
   );
 
   useEffect(() => {
-    // Chỉ redirect sau khi đã load xong auth state
+    // Only redirect after auth state has finished loading
     if (!isLoading) {
       if (!isAuthenticated) {
         router.push("/login");
@@ -29,7 +29,7 @@ export default function ReportsPage() {
     }
   }, [isLoading, isAuthenticated, user, router]);
 
-  // Hiển thị loading khi đang check auth
+  // Show loading while checking auth
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -40,7 +40,7 @@ export default function ReportsPage() {
     );
   }
 
-  // Nếu chưa authenticated hoặc không phải coach, không render gì (đã redirect ở useEffect)
+  // If not authenticated or not a coach, render nothing (redirect handled in useEffect)
   if (!isAuthenticated || !user || user.role !== "coach") {
     return null;
   }

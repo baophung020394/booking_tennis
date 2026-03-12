@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { User } from "@/types";
 import { mockUsers } from "./mock-data";
 
-// Mock API functions - sẽ thay thế bằng API calls thật sau
+// Mock API functions - to be replaced with real API calls later
 const mockLogin = async (email: string, password: string): Promise<User> => {
   await new Promise((resolve) => setTimeout(resolve, 1000));
   const user = mockUsers.find((u) => u.email === email);
@@ -48,20 +48,20 @@ export function useAuth() {
 
   useEffect(() => {
     setMounted(true);
-    // Load user từ localStorage vào cache khi component mount
+    // Load user from localStorage into cache when component mounts
     const storedUser = getStoredUser();
     if (storedUser) {
       queryClient.setQueryData(["auth", "user"], storedUser);
     }
   }, [queryClient]);
 
-  // Query for current user - chỉ enabled sau khi mount để tránh hydration mismatch
+  // Query for current user - only enabled after mount to avoid hydration mismatch
   const { data: user, isLoading } = useQuery<User | null>({
     queryKey: ["auth", "user"],
     queryFn: () => getStoredUser(),
-    enabled: mounted, // Chỉ query sau khi mount
-    staleTime: Infinity, // User data không bao giờ stale khi đã load
-    gcTime: Infinity, // Giữ trong cache vô thời hạn
+    enabled: mounted, // Only query after mount
+    staleTime: Infinity, // User data never goes stale once loaded
+    gcTime: Infinity, // Keep in cache indefinitely
   });
 
   // Login mutation

@@ -56,11 +56,12 @@ export default function CourtsPage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="mb-6 space-y-4"
+        className="mb-6"
       >
-        <div className="flex flex-col md:flex-row gap-4">
+        {/* Search on top with higher z-index so dropdown/results are not covered by buttons */}
+        <div className="relative z-10 mb-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
             <Input
               placeholder="Search courts..."
               value={searchQuery}
@@ -68,26 +69,27 @@ export default function CourtsPage() {
               className="pl-10"
             />
           </div>
-          <div className="flex gap-2">
-            <Button
-              variant={filterType === "all" ? "default" : "outline"}
-              onClick={() => setFilterType("all")}
-            >
-              All Types
-            </Button>
-            <Button
-              variant={filterType === "indoor" ? "default" : "outline"}
-              onClick={() => setFilterType("indoor")}
-            >
-              Indoor
-            </Button>
-            <Button
-              variant={filterType === "outdoor" ? "default" : "outline"}
-              onClick={() => setFilterType("outdoor")}
-            >
-              Outdoor
-            </Button>
-          </div>
+        </div>
+        {/* Buttons below search, do not overlap content below */}
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant={filterType === "all" ? "default" : "outline"}
+            onClick={() => setFilterType("all")}
+          >
+            All Types
+          </Button>
+          <Button
+            variant={filterType === "indoor" ? "default" : "outline"}
+            onClick={() => setFilterType("indoor")}
+          >
+            Indoor
+          </Button>
+          <Button
+            variant={filterType === "outdoor" ? "default" : "outline"}
+            onClick={() => setFilterType("outdoor")}
+          >
+            Outdoor
+          </Button>
         </div>
       </motion.div>
       
